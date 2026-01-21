@@ -1,26 +1,155 @@
 @import "tailwindcss";
 
+/* ===== CSS Variables for Theme ===== */
 :root {
+  /* Light Mode */
   --background: #ffffff;
-  --foreground: #171717;
+  --background-secondary: #f8fafc;
+  --foreground: #1e293b;
+  --foreground-muted: #64748b;
+
+  --primary: #13867c;
+  --primary-dark: #0e615a;
+  --primary-light: rgba(19, 134, 124, 0.1);
+
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+
+  --surface: #f1f5f9;
+  --surface-darker: #e2e8f0;
+
+  --accent-success: #4cd964;
+  --accent-error: #ef4444;
+  --accent-warning: #f2b21c;
+  --accent-lime: #4cd964;
+  --accent-gold: #f2b21c;
+
+  --sidebar-bg: #1a1d23;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-active: #ffffff;
 }
 
+.dark {
+  /* Dark Mode */
+  --background: #1a1d23;
+  --background-secondary: #111717;
+  --foreground: #ffffff;
+  --foreground-muted: #94a3b8;
+
+  --card-bg: #292d34;
+  --card-border: rgba(255, 255, 255, 0.05);
+
+  --surface: #232830;
+  --surface-darker: #15181e;
+
+  --sidebar-bg: #111717;
+}
+
+/* ===== Tailwind Theme Extension ===== */
 @theme inline {
   --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+
+  --color-surface: var(--surface);
+  --color-surface-darker: var(--surface-darker);
+
+  --color-accent-success: var(--accent-success);
+  --color-accent-error: var(--accent-error);
+  --color-accent-warning: var(--accent-warning);
+  --color-accent-lime: var(--accent-lime);
+  --color-accent-gold: var(--accent-gold);
+
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-active: var(--sidebar-text-active);
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Manrope", sans-serif;
+  --font-mono: "Fira Code", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ===== Base Styles ===== */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ===== Custom Utilities ===== */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.glass-panel {
+  background: rgba(35, 40, 48, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .glass-panel {
+  background: rgba(35, 40, 48, 0.6);
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Connection line for steppers */
+.connection-line {
+  position: absolute;
+  width: 2px;
+  background-color: #374151;
+  top: 2rem;
+  bottom: 0;
+  left: 1.5rem;
+  z-index: 0;
+}
+
+/* Glow effects */
+.glow-success {
+  box-shadow: 0 0 10px rgba(76, 217, 100, 0.3);
+}
+.glow-error {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+.glow-warning {
+  box-shadow: 0 0 8px rgba(242, 178, 28, 0.6);
+}
+.glow-primary {
+  box-shadow: 0 0 30px rgba(19, 134, 124, 0.1);
+}
+
+/* Smooth transitions */
+.transition-theme {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Grid background pattern */
+.grid-pattern {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 24px 24px;
 }
