@@ -114,7 +114,7 @@ export default function DurabilityPage() {
         setIsRunning(true);
         setShowNarrator(true);
 
-        const orderId = 1003;
+        const orderId = nextId;
         const sql = `INSERT INTO orders VALUES (${orderId}, '${newCustomer}', '${newProduct}', ${newAmount})`;
 
         addNarratorMessage(0, "👋 Let's see how databases ensure your data survives crashes using Write-Ahead Logging (WAL).", "info");
@@ -145,7 +145,7 @@ export default function DurabilityPage() {
         addNarratorMessage(4, "✅ Complete! WAL entry cleared since data is safely on disk. Order #1003 is now permanent.", "success");
         setWalEntries([]);
         addLog("SUCCESS", "WAL checkpoint complete");
-        setNextId(1004);
+        setNextId((prev) => prev + 1);
 
         setIsRunning(false);
     };
@@ -158,7 +158,7 @@ export default function DurabilityPage() {
         setShowNarrator(true);
         setCrashType("before_wal");
 
-        const orderId = 1003;
+        const orderId = nextId;
         const sql = `INSERT INTO orders VALUES (${orderId}, '${newCustomer}', '${newProduct}', ${newAmount})`;
 
         addNarratorMessage(0, "⚠️ Simulating crash BEFORE WAL write. The new order is only in memory...", "warning");
@@ -195,7 +195,7 @@ export default function DurabilityPage() {
         setShowNarrator(true);
         setCrashType("after_wal");
 
-        const orderId = 1003;
+        const orderId = nextId;
         const sql = `INSERT INTO orders VALUES (${orderId}, '${newCustomer}', '${newProduct}', ${newAmount})`;
 
         addNarratorMessage(0, "🔄 Simulating crash AFTER WAL write. Watch how the database recovers the order!", "warning");
@@ -240,7 +240,7 @@ export default function DurabilityPage() {
         setWalEntries([]);
         addLog("SUCCESS", "Recovery complete! Order restored.");
         setShowRecovery(true);
-        setNextId(1004);
+        setNextId((prev) => prev + 1);
 
         setIsRunning(false);
     };
