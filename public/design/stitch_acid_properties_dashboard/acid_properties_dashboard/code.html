@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ACID Properties Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13867c",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1a1d23",
+                        "card-dark": "#292d34",
+                        "accent-lime": "#4cd964",
+                        "accent-gold": "#f2b21c",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-x-hidden">
+<div class="relative flex h-screen w-full flex-row overflow-hidden">
+<!-- Side Navigation -->
+<aside class="flex h-full w-72 flex-col border-r border-white/5 bg-background-dark">
+<div class="flex h-16 items-center gap-3 px-6 border-b border-white/5">
+<div class="flex items-center justify-center rounded-full bg-primary/20 p-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">science</span>
+</div>
+<h1 class="font-display text-xl font-bold tracking-tight text-white">ACID Lab</h1>
+</div>
+<nav class="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-6">
+<!-- Dashboard (Active) -->
+<a class="group flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-3 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<!-- Menu Items -->
+<div class="mt-4 mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Modules</div>
+<a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-white/5 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">grain</span>
+<span class="font-medium">Atomicity</span>
+</a>
+<a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-white/5 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">rule</span>
+<span class="font-medium">Consistency</span>
+</a>
+<a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-white/5 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="font-medium">Isolation</span>
+</a>
+<a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-white/5 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">hard_drive</span>
+<span class="font-medium">Durability</span>
+</a>
+<div class="mt-auto"></div>
+<a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-white/5 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-white/5">
+<div class="flex items-center gap-3 rounded-lg bg-card-dark p-3 border border-white/5">
+<div class="h-8 w-8 rounded-full bg-cover bg-center" data-alt="User avatar showing a geometric gradient" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAkoS3vZ_4geJWEGUvJWQj2sOn57UrIq35VSWl3_ldFVk7LuUvzFU3yBZGzx7bsnnVmHhuwHXwqhgQuJbRLSgt_mD-JZfWsN1YD3Pd8XtgA1VV6WnM7JWK0z1QRf-Istd-k1uQgfF3l--CQLL_-MW9Pnnn7cpbrDc9Rw5U7Rge-K7Xr01KYdScNlSgtk6xnWNYawdCpCdxdDa1Cj1QgW_depoIRWdkaGeHOgmkfDEl7U_IWaWQeUShWlFqnWXY9XURfxzapubduhA');"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-white">Dev Admin</p>
+<p class="text-xs text-slate-400">root@acidlab.io</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex flex-1 flex-col h-full overflow-hidden relative">
+<!-- Top Header -->
+<header class="flex h-16 w-full items-center justify-between border-b border-white/5 px-8 bg-background-dark/50 backdrop-blur-md sticky top-0 z-20">
+<h2 class="font-display text-lg font-bold text-white tracking-wide">Workbench</h2>
+<div class="flex items-center gap-4">
+<button class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-white/5 hover:text-white transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-white/5 hover:text-white transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-accent-gold"></span>
+</button>
+<button class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-white/5 hover:text-white transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8">
+<div class="mx-auto max-w-7xl flex flex-col gap-8">
+<!-- Page Heading & Status -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="flex flex-col gap-2">
+<h1 class="font-display text-4xl font-black text-white tracking-tight">System Overview</h1>
+<p class="text-slate-400 text-lg">Interactive workbench for database transaction properties.</p>
+</div>
+<div class="flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 self-start md:self-auto">
+<span class="flex h-2 w-2 rounded-full bg-accent-lime shadow-[0_0_8px_rgba(76,217,100,0.6)]"></span>
+<span class="text-sm font-medium text-primary">System Online</span>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex flex-col gap-1 rounded-xl border border-white/5 bg-card-dark p-5 hover:border-white/10 transition-colors">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-400">Active Connections</span>
+<span class="material-symbols-outlined text-primary text-[20px]">hub</span>
+</div>
+<p class="font-display text-3xl font-bold text-white">248</p>
+<p class="text-xs text-accent-lime flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +12% vs last hour
+                        </p>
+</div>
+<div class="flex flex-col gap-1 rounded-xl border border-white/5 bg-card-dark p-5 hover:border-white/10 transition-colors">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-400">Transaction Rate</span>
+<span class="material-symbols-outlined text-primary text-[20px]">speed</span>
+</div>
+<p class="font-display text-3xl font-bold text-white">1.2k<span class="text-lg text-slate-500 font-normal ml-1">/s</span></p>
+<p class="text-xs text-slate-500 mt-1">Steady load</p>
+</div>
+<div class="flex flex-col gap-1 rounded-xl border border-white/5 bg-card-dark p-5 hover:border-white/10 transition-colors">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-400">Avg Latency</span>
+<span class="material-symbols-outlined text-primary text-[20px]">timer</span>
+</div>
+<p class="font-display text-3xl font-bold text-white">42<span class="text-lg text-slate-500 font-normal ml-1">ms</span></p>
+<p class="text-xs text-accent-lime mt-1">Optimal performance</p>
+</div>
+<div class="flex flex-col gap-1 rounded-xl border border-white/5 bg-card-dark p-5 hover:border-white/10 transition-colors">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-slate-400">Last Checkpoint</span>
+<span class="material-symbols-outlined text-primary text-[20px]">history</span>
+</div>
+<p class="font-display text-3xl font-bold text-white">2m<span class="text-lg text-slate-500 font-normal ml-1">ago</span></p>
+<p class="text-xs text-slate-500 mt-1">WAL archived</p>
+</div>
+</div>
+<!-- Main ACID Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+<!-- Atomicity Card -->
+<div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-card-dark border border-white/5 p-8 transition-all hover:border-primary/40 hover:shadow-[0_0_30px_rgba(19,134,124,0.1)]">
+<div class="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
+<div class="flex flex-col gap-6 z-10">
+<div class="flex h-14 w-14 items-center justify-center rounded-xl bg-background-dark border border-white/10 shadow-inner">
+<span class="material-symbols-outlined text-white text-[32px]">grain</span>
+</div>
+<div>
+<h3 class="font-display text-2xl font-bold text-white mb-2">Atomicity</h3>
+<p class="text-slate-400 leading-relaxed">
+                                    All or nothing. Ensures that all operations within a work unit are completed successfully; otherwise, the transaction is aborted.
+                                </p>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 z-10 flex items-center justify-between">
+<span class="text-xs font-mono text-slate-500 uppercase tracking-widest">Status: Monitoring</span>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-primary/40 transition-all active:scale-95">
+                                Simulate Transaction
+                                <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Consistency Card -->
+<div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-card-dark border border-white/5 p-8 transition-all hover:border-primary/40 hover:shadow-[0_0_30px_rgba(19,134,124,0.1)]">
+<div class="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
+<div class="flex flex-col gap-6 z-10">
+<div class="flex h-14 w-14 items-center justify-center rounded-xl bg-background-dark border border-white/10 shadow-inner">
+<span class="material-symbols-outlined text-white text-[32px]">rule</span>
+</div>
+<div>
+<h3 class="font-display text-2xl font-bold text-white mb-2">Consistency</h3>
+<p class="text-slate-400 leading-relaxed">
+                                    Valid data only. Ensures that the database properly changes states upon a successfully committed transaction, maintaining invariants.
+                                </p>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 z-10 flex items-center justify-between">
+<span class="text-xs font-mono text-slate-500 uppercase tracking-widest">Status: Valid</span>
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-primary text-primary px-5 py-2.5 text-sm font-bold hover:bg-primary hover:text-white transition-all active:scale-95">
+                                Check Constraints
+                                <span class="material-symbols-outlined text-[18px]">fact_check</span>
+</button>
+</div>
+</div>
+<!-- Isolation Card -->
+<div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-card-dark border border-white/5 p-8 transition-all hover:border-primary/40 hover:shadow-[0_0_30px_rgba(19,134,124,0.1)]">
+<div class="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
+<div class="flex flex-col gap-6 z-10">
+<div class="flex h-14 w-14 items-center justify-center rounded-xl bg-background-dark border border-white/10 shadow-inner">
+<span class="material-symbols-outlined text-white text-[32px]">security</span>
+</div>
+<div>
+<h3 class="font-display text-2xl font-bold text-white mb-2">Isolation</h3>
+<p class="text-slate-400 leading-relaxed">
+                                    Independent execution. Enables transactions to operate independently of and transparently to each other to prevent concurrency issues.
+                                </p>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 z-10 flex items-center justify-between">
+<span class="text-xs font-mono text-slate-500 uppercase tracking-widest">Level: Serializable</span>
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-primary text-primary px-5 py-2.5 text-sm font-bold hover:bg-primary hover:text-white transition-all active:scale-95">
+                                View Concurrency
+                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Durability Card -->
+<div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-card-dark border border-white/5 p-8 transition-all hover:border-primary/40 hover:shadow-[0_0_30px_rgba(19,134,124,0.1)]">
+<div class="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
+<div class="flex flex-col gap-6 z-10">
+<div class="flex h-14 w-14 items-center justify-center rounded-xl bg-background-dark border border-white/10 shadow-inner">
+<span class="material-symbols-outlined text-white text-[32px]">hard_drive</span>
+</div>
+<div>
+<h3 class="font-display text-2xl font-bold text-white mb-2">Durability</h3>
+<p class="text-slate-400 leading-relaxed">
+                                    Forever saved. Ensures that the result or effect of a committed transaction persists in case of a system failure or crash.
+                                </p>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 z-10 flex items-center justify-between">
+<span class="text-xs font-mono text-slate-500 uppercase tracking-widest">Storage: Synced</span>
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-primary text-primary px-5 py-2.5 text-sm font-bold hover:bg-primary hover:text-white transition-all active:scale-95">
+                                Test Crash Recovery
+                                <span class="material-symbols-outlined text-[18px]">bug_report</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

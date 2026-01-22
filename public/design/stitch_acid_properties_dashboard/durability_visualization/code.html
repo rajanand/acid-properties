@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ACID Sim - Durability Visualization</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13867c",
+                        "primary-hover": "#0f6b63",
+                        "accent-warning": "#f2b21c",
+                        "accent-success": "#4cd964",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1a1d23",
+                        "panel-dark": "#292d34",
+                        "border-dark": "#3d4552",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111717] dark:text-white font-body overflow-hidden h-screen flex">
+<!-- SideNavBar -->
+<aside class="w-64 border-r border-border-dark flex-shrink-0 flex flex-col justify-between bg-panel-dark">
+<div class="flex flex-col gap-6 p-6">
+<div class="flex flex-col gap-1">
+<h1 class="text-white text-xl font-display font-bold leading-normal tracking-tight">ACID Sim</h1>
+<p class="text-[#9eb7b5] text-xs font-normal leading-normal">Database Visualizer v2.0</p>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9eb7b5] hover:bg-[#3d4552] transition-colors group" href="#">
+<span class="material-symbols-outlined text-[#9eb7b5] group-hover:text-white" style="font-size: 24px;">scatter_plot</span>
+<span class="text-sm font-medium leading-normal group-hover:text-white">Atomicity</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9eb7b5] hover:bg-[#3d4552] transition-colors group" href="#">
+<span class="material-symbols-outlined text-[#9eb7b5] group-hover:text-white" style="font-size: 24px;">balance</span>
+<span class="text-sm font-medium leading-normal group-hover:text-white">Consistency</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9eb7b5] hover:bg-[#3d4552] transition-colors group" href="#">
+<span class="material-symbols-outlined text-[#9eb7b5] group-hover:text-white" style="font-size: 24px;">lock</span>
+<span class="text-sm font-medium leading-normal group-hover:text-white">Isolation</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30" href="#">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px; font-variation-settings: 'FILL' 1;">hard_drive</span>
+<span class="text-sm font-bold leading-normal">Durability</span>
+</a>
+</nav>
+</div>
+<div class="p-6 border-t border-border-dark">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#111717]/50 border border-border-dark">
+<span class="material-symbols-outlined text-[#9eb7b5]" style="font-size: 20px;">info</span>
+<p class="text-[#9eb7b5] text-xs font-medium leading-normal">Simulation Mode: Interactive</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Top Bar / Page Header -->
+<header class="h-20 border-b border-border-dark bg-background-dark/95 backdrop-blur-sm flex items-center justify-between px-8 z-10 flex-shrink-0">
+<div>
+<h2 class="text-2xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+                    Durability Simulation
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-primary/20 text-primary border border-primary/20">Lab #04</span>
+</h2>
+<p class="text-[#9eb7b5] text-sm mt-1 max-w-2xl">Visualizing persistence through Write-Ahead Logging (WAL) and disk flushes.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<span class="text-[10px] uppercase tracking-widest text-[#9eb7b5] font-bold">System Status</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-accent-success animate-pulse"></span>
+<span class="text-accent-success font-display font-bold">ONLINE</span>
+</div>
+</div>
+<div class="h-8 w-[1px] bg-border-dark mx-2"></div>
+<div class="flex flex-col items-end">
+<span class="text-[10px] uppercase tracking-widest text-[#9eb7b5] font-bold">Active TX</span>
+<span class="text-white font-mono text-sm">#TX-4092</span>
+</div>
+</div>
+</header>
+<!-- Simulation Stage (Split View) -->
+<div class="flex-1 flex overflow-hidden p-6 gap-6 relative">
+<!-- Left Panel: Volatile Memory -->
+<section class="flex-1 flex flex-col bg-panel-dark rounded-xl border border-border-dark overflow-hidden group/ram relative">
+<!-- Decorative scanline effect -->
+<div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none"></div>
+<div class="p-4 border-b border-border-dark bg-[#22252b] flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-orange-400" style="font-size: 24px;">memory</span>
+<div>
+<h3 class="text-white font-display font-semibold text-lg">Volatile Memory (RAM)</h3>
+<p class="text-[#9eb7b5] text-xs">Buffer Pool • Transient Storage</p>
+</div>
+</div>
+<div class="px-2 py-1 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-[10px] font-bold uppercase tracking-wider">
+                        Risk: High
+                    </div>
+</div>
+<div class="flex-1 p-6 relative">
+<!-- RAM Visualization Grid -->
+<div class="grid grid-cols-4 gap-3">
+<!-- Empty Slots -->
+<div class="aspect-square rounded border border-dashed border-[#3d4552] flex items-center justify-center bg-[#1a1d23]/50">
+<span class="text-[#3d4552] text-xs font-mono">0x00</span>
+</div>
+<!-- Active Data Block -->
+<div class="aspect-square rounded border border-orange-400/50 bg-orange-400/10 flex flex-col items-center justify-center relative shadow-[0_0_15px_rgba(251,146,60,0.15)] animate-pulse">
+<span class="material-symbols-outlined text-orange-400 mb-1" style="font-size: 20px;">bolt</span>
+<span class="text-orange-400 text-xs font-mono font-bold">TX-4092</span>
+<span class="text-orange-300/50 text-[10px] font-mono mt-1">DIRTY</span>
+<!-- Connecting line to the right -->
+<div class="absolute -right-6 top-1/2 w-6 h-[2px] bg-gradient-to-r from-orange-400/50 to-transparent"></div>
+</div>
+<!-- More slots -->
+<div class="aspect-square rounded border border-dashed border-[#3d4552] flex items-center justify-center bg-[#1a1d23]/50">
+<span class="text-[#3d4552] text-xs font-mono">0x02</span>
+</div>
+<div class="aspect-square rounded border border-dashed border-[#3d4552] flex items-center justify-center bg-[#1a1d23]/50">
+<span class="text-[#3d4552] text-xs font-mono">0x03</span>
+</div>
+<div class="aspect-square rounded border border-dashed border-[#3d4552] flex items-center justify-center bg-[#1a1d23]/50">
+<span class="text-[#3d4552] text-xs font-mono">0x04</span>
+</div>
+<div class="aspect-square rounded border border-dashed border-[#3d4552] flex items-center justify-center bg-[#1a1d23]/50">
+<span class="text-[#3d4552] text-xs font-mono">0x05</span>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 right-6">
+<div class="flex justify-between text-xs text-[#9eb7b5] mb-2 font-mono">
+<span>Buffer Usage</span>
+<span>16%</span>
+</div>
+<div class="w-full bg-[#1a1d23] rounded-full h-1.5 overflow-hidden">
+<div class="bg-orange-400 h-full rounded-full w-[16%] shadow-[0_0_10px_rgba(251,146,60,0.5)]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Center Flow Arrows (Visual Connector) -->
+<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-10 pointer-events-none opacity-60">
+<span class="material-symbols-outlined text-primary animate-bounce" style="font-size: 32px;">keyboard_double_arrow_right</span>
+<span class="text-[10px] uppercase font-bold text-primary tracking-widest bg-background-dark px-2">Flush</span>
+</div>
+<!-- Right Panel: Persistent Storage -->
+<section class="flex-1 flex flex-col bg-panel-dark rounded-xl border border-border-dark overflow-hidden relative">
+<div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none"></div>
+<div class="p-4 border-b border-border-dark bg-[#22252b] flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">storage</span>
+<div>
+<h3 class="text-white font-display font-semibold text-lg">Non-Volatile Storage</h3>
+<p class="text-[#9eb7b5] text-xs">Disk • Write-Ahead Log (WAL)</p>
+</div>
+</div>
+<div class="px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary text-[10px] font-bold uppercase tracking-wider">
+                        Safe: Yes
+                    </div>
+</div>
+<div class="flex-1 p-6 flex flex-col gap-6">
+<!-- WAL Visualization -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="text-xs font-bold text-[#9eb7b5] uppercase tracking-wider">Write-Ahead Log (Sequential)</span>
+<span class="text-[10px] font-mono text-primary bg-primary/10 px-1 rounded">Append Only</span>
+</div>
+<div class="h-16 bg-[#1a1d23] rounded border border-[#3d4552] flex items-center px-2 gap-2 overflow-hidden relative shadow-inner">
+<!-- Existing Logs -->
+<div class="h-10 w-24 bg-primary/20 border border-primary/40 rounded flex flex-col items-center justify-center flex-shrink-0">
+<span class="text-[10px] text-primary font-mono">TX-4090</span>
+<span class="material-symbols-outlined text-primary text-[10px]">check_circle</span>
+</div>
+<div class="h-10 w-24 bg-primary/20 border border-primary/40 rounded flex flex-col items-center justify-center flex-shrink-0">
+<span class="text-[10px] text-primary font-mono">TX-4091</span>
+<span class="material-symbols-outlined text-primary text-[10px]">check_circle</span>
+</div>
+<!-- Incoming Ghost Log -->
+<div class="h-10 w-24 border border-dashed border-primary/30 rounded flex flex-col items-center justify-center flex-shrink-0 opacity-50">
+<span class="text-[10px] text-primary font-mono">Writing...</span>
+</div>
+</div>
+</div>
+<!-- Disk Platter Visualization -->
+<div class="flex-1 bg-[#1a1d23] rounded border border-[#3d4552] relative overflow-hidden flex items-center justify-center">
+<!-- Abstract Disk Graphic -->
+<div class="w-48 h-48 rounded-full border-4 border-[#292d34] relative flex items-center justify-center shadow-2xl">
+<div class="absolute inset-0 rounded-full border border-[#3d4552] opacity-30 animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute inset-4 rounded-full border border-[#3d4552] opacity-30 animate-[spin_15s_linear_infinite_reverse]"></div>
+<div class="w-16 h-16 bg-[#292d34] rounded-full flex items-center justify-center z-10 shadow-lg">
+<span class="material-symbols-outlined text-[#5c6b7f]" style="font-size: 24px;">dns</span>
+</div>
+<!-- Data Sector Highlight -->
+<div class="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-br from-primary/20 to-transparent rounded-tr-full transform rotate-45 origin-bottom-left"></div>
+</div>
+<!-- Write Head Arm -->
+<div class="absolute right-10 top-1/2 w-24 h-2 bg-[#3d4552] origin-right transform -rotate-12 rounded-full shadow-lg">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-6 bg-[#9eb7b5] rounded-sm shadow-md"></div>
+</div>
+<div class="absolute bottom-3 right-3 text-[10px] font-mono text-[#5c6b7f]">
+                            RPM: 15k<br/>
+                            IOPS: 450
+                        </div>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Workbench / Controls -->
+<div class="h-64 border-t border-border-dark bg-[#14161b] flex flex-col flex-shrink-0 z-20 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
+<!-- Control Header -->
+<div class="h-10 border-b border-border-dark flex items-center px-4 bg-[#1a1d23]">
+<span class="material-symbols-outlined text-[#9eb7b5] mr-2" style="font-size: 18px;">terminal</span>
+<span class="text-xs font-bold text-[#9eb7b5] uppercase tracking-wider">Control Workbench</span>
+</div>
+<div class="flex flex-1 overflow-hidden">
+<!-- Interactive Controls -->
+<div class="w-1/3 p-6 border-r border-border-dark flex flex-col gap-4">
+<div class="grid grid-cols-2 gap-3">
+<button class="col-span-2 group relative flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-lg transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98]">
+<span class="material-symbols-outlined">save</span>
+<div class="flex flex-col items-start">
+<span class="font-display font-bold text-sm">Commit Transaction</span>
+<span class="text-[10px] text-white/70 font-normal">Write to Log &amp; Flush</span>
+</div>
+<!-- Subtle progress indicator within button -->
+<div class="absolute bottom-0 left-0 h-1 bg-white/20 w-0 group-hover:w-full transition-all duration-700"></div>
+</button>
+<button class="flex items-center justify-center gap-2 bg-[#292d34] hover:bg-accent-warning/20 border border-accent-warning/30 hover:border-accent-warning text-white px-4 py-3 rounded-lg transition-all group">
+<span class="material-symbols-outlined text-accent-warning group-hover:animate-pulse">power_off</span>
+<span class="font-medium text-xs text-accent-warning">Cut Power</span>
+</button>
+<button class="flex items-center justify-center gap-2 bg-[#292d34] hover:bg-[#3d4552] border border-[#3d4552] text-[#9eb7b5] px-4 py-3 rounded-lg transition-all disabled:opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined">restart_alt</span>
+<span class="font-medium text-xs">Reboot</span>
+</button>
+</div>
+<div class="flex items-center gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded text-blue-300 text-xs">
+<span class="material-symbols-outlined text-sm">help</span>
+                        Try cutting power immediately after committing!
+                    </div>
+</div>
+<!-- Log Console -->
+<div class="flex-1 bg-[#0d1014] p-4 font-mono text-xs overflow-y-auto custom-scrollbar flex flex-col gap-1">
+<div class="flex gap-2 text-[#5c6b7f]">
+<span>[10:42:01]</span>
+<span>SYSTEM_INIT:</span>
+<span>Memory allocated 4096MB</span>
+</div>
+<div class="flex gap-2 text-[#5c6b7f]">
+<span>[10:42:02]</span>
+<span>DISK_CHECK:</span>
+<span>Mount point /dev/sda1 verified</span>
+</div>
+<div class="flex gap-2 text-primary/80">
+<span>[10:42:05]</span>
+<span>TX_START:</span>
+<span>Transaction #TX-4090 started</span>
+</div>
+<div class="flex gap-2 text-accent-success/80">
+<span>[10:42:06]</span>
+<span>WAL_WRITE:</span>
+<span>#TX-4090 flushed to disk (LSN: 5502)</span>
+</div>
+<div class="flex gap-2 text-primary/80">
+<span>[10:43:12]</span>
+<span>TX_START:</span>
+<span>Transaction #TX-4091 started</span>
+</div>
+<div class="flex gap-2 text-accent-success/80">
+<span>[10:43:13]</span>
+<span>WAL_WRITE:</span>
+<span>#TX-4091 flushed to disk (LSN: 5503)</span>
+</div>
+<div class="flex gap-2 text-white mt-2 animate-pulse">
+<span class="text-orange-400"> &gt; </span>
+<span>Waiting for user input...</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Toast Notification (Absolute positioned) -->
+<div class="absolute top-24 right-6 bg-[#1a1d23] border border-l-4 border-l-primary border-y-border-dark border-r-border-dark text-white px-4 py-3 rounded shadow-2xl flex items-start gap-3 max-w-sm z-50 transform transition-all translate-x-0">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div>
+<h4 class="font-bold text-sm">Durability Principle</h4>
+<p class="text-xs text-[#9eb7b5] mt-1 leading-relaxed">Even if the database crashes, committed transactions (those in the WAL) are recovered upon restart.</p>
+</div>
+<button class="text-[#5c6b7f] hover:text-white"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+</main>
+<style>
+        /* Custom Scrollbar for console */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0d1014; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #292d34; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #3d4552; 
+        }
+    </style>
+</body></html>

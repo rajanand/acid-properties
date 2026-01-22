@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Consistency Visualization</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13867c",
+                        "primary-dark": "#0d635b",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1a1d23",
+                        "surface-dark": "#232730",
+                        "surface-darker": "#15181e",
+                        "warning": "#f2b21c",
+                        "success": "#4cd964",
+                        "danger": "#ef4444",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Manrope", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px -5px rgba(19, 134, 124, 0.3)',
+                        'glow-error': '0 0 20px -5px rgba(239, 68, 68, 0.3)',
+                        'inner-subtle': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Manrope", sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: "Space Grotesk", sans-serif;
+        }
+        /* Custom scrollbar for the log window */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: #15181e;
+        }
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 overflow-hidden h-screen flex flex-col">
+<div class="flex h-full w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 flex-shrink-0 flex flex-col bg-[#111717] border-r border-white/5 h-full">
+<div class="p-6">
+<div class="flex flex-col gap-1">
+<h1 class="text-white text-xl font-bold tracking-tight">ACID Lab</h1>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Database Workbench</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-2">
+<!-- Atomicity -->
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">data_object</span>
+<span class="text-sm font-medium">Atomicity</span>
+</a>
+<!-- Consistency (Active) -->
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/20 text-white border-l-2 border-primary shadow-[0_0_15px_-3px_rgba(19,134,124,0.4)]" href="#">
+<span class="material-symbols-outlined text-primary fill-1">balance</span>
+<span class="text-sm font-bold">Consistency</span>
+</a>
+<!-- Isolation -->
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">grid_view</span>
+<span class="text-sm font-medium">Isolation</span>
+</a>
+<!-- Durability -->
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">shield</span>
+<span class="text-sm font-medium">Durability</span>
+</a>
+</nav>
+<div class="p-4 border-t border-white/5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-emerald-400 flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                        DB
+                    </div>
+<div>
+<p class="text-sm font-medium text-white">PostgreSQL 15</p>
+<p class="text-xs text-emerald-400 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Connected
+                        </p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Top Bar / Header -->
+<header class="px-8 py-6 border-b border-white/5 bg-[#15181e]/80 backdrop-blur-md sticky top-0 z-10">
+<div class="flex justify-between items-start">
+<div class="max-w-2xl">
+<h2 class="text-3xl font-display font-bold text-white mb-2 tracking-tight">Consistency: Data Integrity Rules</h2>
+<p class="text-slate-400 text-sm leading-relaxed max-w-xl">
+                            Simulate database constraints and visualize how the system rejects invalid states. 
+                            The system is configured to prevent negative balances.
+                        </p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium rounded-lg transition-colors border border-white/5">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                            History
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium rounded-lg transition-colors border border-white/5">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                            Config
+                        </button>
+</div>
+</div>
+</header>
+<!-- Content Grid -->
+<div class="flex-1 overflow-y-auto p-8 scrollbar-custom">
+<div class="grid grid-cols-12 gap-8 max-w-[1600px] mx-auto pb-10">
+<!-- Left Column: Rulebook & Controls -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- Constraint Card -->
+<div class="bg-surface-dark border border-white/5 rounded-xl p-5 shadow-lg relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl">gavel</span>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl">security</span>
+<h3 class="text-white font-display font-semibold text-lg">Active Constraint</h3>
+</div>
+<div class="bg-surface-darker rounded-lg p-4 border border-white/5 font-mono text-xs sm:text-sm text-slate-300 shadow-inner-subtle relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary/50 rounded-l-lg"></div>
+<p class="text-slate-500 mb-2">// Prevent account overdraft</p>
+<p class="text-purple-400 font-bold">CONSTRAINT</p>
+<p class="pl-4 text-white">check_balance</p>
+<p class="text-purple-400 font-bold mt-1">CHECK</p>
+<p class="pl-4 text-white">(balance &gt;= 0);</p>
+</div>
+<div class="mt-4 flex items-center gap-2 text-xs text-slate-400">
+<span class="material-symbols-outlined text-[16px] text-success">check_circle</span>
+<span>Constraint enforced on all WRITE operations.</span>
+</div>
+</div>
+<!-- Transaction Form -->
+<div class="bg-surface-dark border border-white/5 rounded-xl p-6 shadow-lg flex-1 flex flex-col">
+<h3 class="text-white font-display font-semibold text-lg mb-6 border-b border-white/5 pb-4">New Transaction</h3>
+<div class="flex flex-col gap-5">
+<div class="space-y-1">
+<label class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">From Account</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-500">person</span>
+</div>
+<input class="w-full bg-surface-darker border border-white/10 rounded-lg py-3 pl-10 pr-4 text-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-not-allowed opacity-80" readonly="" type="text" value="Alice (ID: 001)"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<span class="text-xs text-emerald-500 font-mono">$100.00</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center -my-2 z-10">
+<div class="bg-surface-dark border border-white/10 rounded-full p-1.5 shadow-lg">
+<span class="material-symbols-outlined text-slate-400 text-sm">arrow_downward</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">To Account</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-500">person</span>
+</div>
+<input class="w-full bg-surface-darker border border-white/10 rounded-lg py-3 pl-10 pr-4 text-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-not-allowed opacity-80" readonly="" type="text" value="Bob (ID: 002)"/>
+</div>
+</div>
+<div class="space-y-1 mt-2">
+<label class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Transfer Amount</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">attach_money</span>
+</div>
+<input class="w-full bg-surface-darker border border-primary/50 text-white rounded-lg py-4 pl-10 pr-4 text-lg font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-slate-600 shadow-[0_0_15px_-5px_rgba(19,134,124,0.1)]" type="number" value="150.00"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<span class="text-xs text-slate-500 font-mono">USD</span>
+</div>
+</div>
+<p class="text-xs text-warning flex items-center gap-1 mt-1 ml-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                        Note: Amount exceeds available balance.
+                                    </p>
+</div>
+</div>
+<div class="mt-8 flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg shadow-glow transition-all active:scale-[0.98] flex justify-center items-center gap-2 group">
+<span>Execute Transaction</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+</button>
+<button class="w-full bg-transparent hover:bg-white/5 text-slate-400 font-medium py-2 px-6 rounded-lg transition-colors text-sm">
+                                    Reset Simulation
+                                </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Visualization & Logs -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- Visualization Area -->
+<div class="bg-[#15181e] border border-white/5 rounded-xl p-8 shadow-inner-subtle relative min-h-[400px]">
+<!-- Status Banner -->
+<div class="absolute top-4 left-1/2 -translate-x-1/2 bg-surface-dark border border-white/10 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-lg z-20">
+<div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+<span class="text-xs font-mono text-slate-300">SYSTEM STABLE</span>
+</div>
+<div class="flex flex-col h-full justify-between gap-10">
+<!-- Database State Label -->
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-slate-400">table_view</span>
+<h3 class="text-slate-200 font-display font-medium">Live Database State</h3>
+</div>
+<!-- Tables Container -->
+<div class="flex flex-wrap md:flex-nowrap gap-6 items-start justify-center relative">
+<!-- Connection Line (Visual Only) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 border-t-2 border-dashed border-slate-700 hidden md:block"></div>
+<!-- Table 1 -->
+<div class="flex-1 min-w-[280px] bg-surface-dark border border-white/5 rounded-lg overflow-hidden shadow-lg group hover:border-white/10 transition-colors">
+<div class="bg-[#1e232b] px-4 py-3 border-b border-white/5 flex justify-between items-center">
+<span class="text-sm font-bold text-slate-300 font-mono">Table: accounts</span>
+<span class="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded font-bold">PRIMARY</span>
+</div>
+<div class="p-0">
+<table class="w-full text-left text-sm">
+<thead class="bg-white/5 text-slate-400 text-xs uppercase">
+<tr>
+<th class="px-4 py-2 font-medium">ID</th>
+<th class="px-4 py-2 font-medium">Owner</th>
+<th class="px-4 py-2 font-medium text-right">Balance</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5 text-slate-300">
+<tr class="bg-primary/10 relative overflow-hidden">
+<!-- Highlight Row -->
+<td class="px-4 py-3 font-mono text-slate-400">001</td>
+<td class="px-4 py-3">Alice</td>
+<td class="px-4 py-3 text-right font-mono font-bold text-emerald-400">$100.00</td>
+<td class="absolute right-0 top-0 bottom-0 w-1 bg-primary"></td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-4 py-3 font-mono text-slate-400">002</td>
+<td class="px-4 py-3">Bob</td>
+<td class="px-4 py-3 text-right font-mono font-bold text-emerald-400">$50.00</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors opacity-50">
+<td class="px-4 py-3 font-mono text-slate-400">003</td>
+<td class="px-4 py-3">Charlie</td>
+<td class="px-4 py-3 text-right font-mono font-bold text-emerald-400">$250.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-[#1e232b] px-4 py-2 border-t border-white/5 text-[10px] text-slate-500 font-mono flex justify-between">
+<span>3 rows selected</span>
+<span>Latency: 2ms</span>
+</div>
+</div>
+<!-- Pending Transaction Visual (Ghost) -->
+<div class="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 bg-surface-dark border border-warning/50 rounded-lg p-3 shadow-glow-error opacity-0 scale-90 transition-all duration-300 z-10">
+<div class="flex items-center gap-3">
+<div class="bg-warning/20 p-2 rounded-full text-warning">
+<span class="material-symbols-outlined text-lg">block</span>
+</div>
+<div>
+<p class="text-xs font-bold text-warning uppercase">Constraint Violation</p>
+<p class="text-xs text-slate-300">Balance cannot be negative</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 grid grid-cols-2 gap-4">
+<div class="bg-surface-dark border border-white/5 rounded-lg p-4 flex flex-col gap-1">
+<p class="text-xs text-slate-500 uppercase font-bold">Projected Alice Balance</p>
+<div class="flex items-end gap-2">
+<p class="text-xl font-mono font-bold text-danger">-$50.00</p>
+<span class="text-xs text-danger mb-1">(Invalid)</span>
+</div>
+<div class="w-full bg-slate-700 h-1 mt-2 rounded-full overflow-hidden">
+<div class="bg-danger w-full h-full animate-pulse"></div>
+</div>
+</div>
+<div class="bg-surface-dark border border-white/5 rounded-lg p-4 flex flex-col gap-1 opacity-50">
+<p class="text-xs text-slate-500 uppercase font-bold">Projected Bob Balance</p>
+<div class="flex items-end gap-2">
+<p class="text-xl font-mono font-bold text-slate-300">$200.00</p>
+<span class="text-xs text-slate-500 mb-1">(Pending)</span>
+</div>
+<div class="w-full bg-slate-700 h-1 mt-2 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- System Log / Console -->
+<div class="flex-1 bg-[#0f1115] border border-white/10 rounded-xl overflow-hidden shadow-lg flex flex-col min-h-[250px]">
+<div class="bg-[#1a1d23] px-4 py-2 border-b border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500 text-sm">terminal</span>
+<span class="text-xs font-bold text-slate-300 uppercase tracking-wide">Transaction Log</span>
+</div>
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+</div>
+</div>
+<div class="p-4 font-mono text-xs md:text-sm text-slate-400 overflow-y-auto flex-1 scrollbar-custom space-y-1">
+<div class="flex gap-3">
+<span class="text-slate-600 shrink-0">[10:42:01]</span>
+<span>System initialized. Database mounted.</span>
+</div>
+<div class="flex gap-3">
+<span class="text-slate-600 shrink-0">[10:42:02]</span>
+<span class="text-emerald-500">Constraint loaded: check_balance (balance &gt;= 0)</span>
+</div>
+<div class="flex gap-3">
+<span class="text-slate-600 shrink-0">[10:42:05]</span>
+<span>User session active: admin@acid-lab.io</span>
+</div>
+<div class="flex gap-3 pt-2">
+<span class="text-slate-600 shrink-0">[10:45:12]</span>
+<span class="text-white font-bold">&gt; PREPARE TRANSACTION:</span>
+</div>
+<div class="flex gap-3">
+<span class="text-slate-600 shrink-0 select-none opacity-0">[10:45:12]</span>
+<span class="pl-4">SOURCE: 001 (Alice)</span>
+</div>
+<div class="flex gap-3">
+<span class="text-slate-600 shrink-0 select-none opacity-0">[10:45:12]</span>
+<span class="pl-4">DEST: 002 (Bob)</span>
+</div>
+<div class="flex gap-3">
+<span class="text-slate-600 shrink-0 select-none opacity-0">[10:45:12]</span>
+<span class="pl-4">AMOUNT: 150.00</span>
+</div>
+<div class="flex gap-3 animate-pulse">
+<span class="text-slate-600 shrink-0">[10:45:12]</span>
+<span class="text-warning">&gt; Waiting for user confirmation...</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
